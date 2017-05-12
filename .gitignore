@@ -1,0 +1,4 @@
+.aws_creds
+.rackspace_creds
+terraform.tfstate
+terraform.tfstate.backup
