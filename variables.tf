@@ -8,10 +8,30 @@ variable "cardTable" {
 #Set this to how many students we're making instances for
 variable "studentCount" {
   description = "How many students we need to make nodes for"
-  default = 4
+  default = 1
 }
 
 variable "ami" {
   description = "which ami to use for this environment"
   default = "ami-6bb7310b"
+}
+
+variable "chefServerInstanceType" {
+  description = "Chef server ec2 instance type"
+  default = "t2.micro"
+}
+
+variable "automateInstanceType" {
+  description = "Automate server ec2 instance type"
+  default = "t2.micro"
+}
+
+variable "runnerInstanceType" {
+  description = "Runner server ec2 instance type"
+  default = "t2.micro"
+}
+
+variable "prodInstanceType" {
+  description = "Prod server ec2 instance type"
+  default = "t2.micro"
 }
