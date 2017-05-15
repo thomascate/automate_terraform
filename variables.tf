@@ -8,7 +8,7 @@ variable "cardTable" {
 #Set this to how many students we're making instances for
 variable "studentCount" {
   description = "How many students we need to make nodes for"
-  default = 1
+  default = 2
 }
 
 variable "ami" {
@@ -34,4 +34,14 @@ variable "runnerInstanceType" {
 variable "prodInstanceType" {
   description = "Prod server ec2 instance type"
   default = "t2.micro"
+}
+
+variable "key_name" {
+  description = "Name of the SSH keypair to use in AWS."
+  default = "tcate"
+}
+
+variable "securityGroups" {
+  description = "Security Groups to attach instance to"
+  default = ["sg-00ff8c7b"]
 }

@@ -1,4 +1,4 @@
 .aws_creds
-.rackspace_creds
+.dns_creds
 terraform.tfstate
 terraform.tfstate.backup
