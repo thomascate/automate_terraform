@@ -12,11 +12,6 @@ execute 'update packages' do
   action :run
 end
 
-group 'sysadmin' do
-  action :create
-end
-
-
 user 'student' do
   action :create
   comment 'User for automate class'

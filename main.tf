@@ -12,21 +12,21 @@ resource "aws_instance" "chefserver" {
   key_name = "${var.key_name}"
   vpc_security_group_ids = "${var.securityGroups}"
   provisioner "local-exec" {
-    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.chefserver\" \"${aws_instance.chefserver.public_ip}\""
+    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.chefserver\" \"${self.public_ip}\""
   }
   provisioner "file" {
     source      = "./cookbooks"
     destination = "/tmp/cookbooks"
   }
-#  provisioner "remote-exec" {
-#    inline    = [
-#      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.chefserver.e9.io",
-#      "sudo /usr/bin/yum -y install wget",
-#      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-#      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-#      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab]"
-#    ]
-#  }
+  provisioner "remote-exec" {
+    inline    = [
+      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.chefserver.e9.io",
+      "sudo /usr/bin/yum -y install wget",
+      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
+      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
+      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab]"
+    ]
+  }
   connection {
     type     = "ssh"
     user     = "centos"
