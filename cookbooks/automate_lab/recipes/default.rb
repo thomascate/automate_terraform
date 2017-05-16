@@ -22,6 +22,11 @@ user 'student' do
   manage_home true
 end
 
+group 'student' do
+  action :create
+  members ['student']
+end
+
 #crond shouldn't be relying on the old hostname, but we'll bounce it to be sure
 service 'crond' do
   action :nothing
