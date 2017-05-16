@@ -7,10 +7,21 @@
 include_recipe 'openssh'
 include_recipe 'yum'
 
-execute 'update packages' do
-  command 'yum update -y'
-  action :run
+packages = [
+  'emacs-nox',
+  'nano',
+  'traceroute',
+  'vim-enhanced'
+]
+
+package packages do
+  action :install
 end
+
+#execute 'update packages' do
+#  command 'yum update -y'
+#  action :run
+#end
 
 user 'student' do
   action :create

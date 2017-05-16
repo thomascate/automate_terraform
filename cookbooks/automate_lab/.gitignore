@@ -19,3 +19,7 @@ bin/*
 Berksfile.lock
 .zero-knife.rb
 Policyfile.lock.json
+
+# Keys
+cookbooks/delivery.pem
+cookbooks/delivery.pem.pub

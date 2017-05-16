@@ -8,6 +8,7 @@ version '0.1.0'
 
 depends 'openssh'
 depends 'yum'
+depends 'chef-ingredient'
 
 # The `issues_url` points to the location where issues for this cookbook are
 # tracked.  A `View Issues` link will be displayed on this cookbook's page when
