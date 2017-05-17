@@ -1,8 +1,8 @@
 chef_ingredient "chef-server" do
   config <<-EOS
-  api_fqdn "#{node["fqdn"]}"
-  data_collector_url "https://demoautomate.e9.io"
-  data_collector_token "mytokenfordatacollection"
+api_fqdn "#{node["fqdn"]}"
+data_collector['root_url'] = "https://demo.automate.e9.io/data-collector/v0/"
+data_collector['token'] = "mytokenfordatacollection"
   EOS
   action :install
   package_source 'https://packages.chef.io/files/stable/chef-server/12.15.6/el/7/chef-server-core-12.15.6-1.el7.x86_64.rpm'
@@ -37,6 +37,6 @@ chef_org "automate org" do
   users ["delivery"]
 end
 
-execute "add delivery client keys" do
+execute "add delivery user key" do
   command "chef-server-ctl add-user-key delivery --public-key-path /tmp/cookbooks/delivery.pem.pub"
 end

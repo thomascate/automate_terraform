@@ -6,9 +6,11 @@ description 'Installs/Configures automate_lab'
 long_description 'Installs/Configures automate_lab'
 version '0.1.0'
 
+depends 'chef-client'
+depends 'chef-ingredient'
+depends 'line'
 depends 'openssh'
 depends 'yum'
-depends 'chef-ingredient'
 
 # The `issues_url` points to the location where issues for this cookbook are
 # tracked.  A `View Issues` link will be displayed on this cookbook's page when

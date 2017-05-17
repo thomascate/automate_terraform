@@ -1,48 +1,55 @@
-#chef_ingredient "automate" do
-#  action :install
-#  chef_user 'delivery'
-#  chef_user_pem '/tmp/cookbooks/delivery.pem'
-#  enterprise 'automate_training_ent'
-#  package_source 'https://packages.chef.io/files/stable/automate/0.7.239/el/7/automate-0.7.239-1.el7.x86_64.rpm'
-#  product_name "chef-automate"
-#end
-
-chef_file  "automate.license" do
-  filename "automate.license"
-  group    "root"
-  source   "/tmp/cookbooks/automate_lab/files/default/automate.license"
-  user     "root"
-end
-
-chef_ingredient "reconfigure" do
-  action :reconfigure
-  product_name "automate"
-end
-
-# Everything below this was on the remote server
-chef_automate "automate" do
-  config <<-EOS
-  delivery_fqdn "#{node['fqdn']}"
-  EOS
+remote_file 'grab automate package' do
   action :create
-  chef_user 'delivery'
-  chef_user_pem '/tmp/cookbooks/delivery.pem'
-  enterprise 'automate_training_ent'
-  license '/tmp/cookbooks/automate_lab/files/default/automate.license'
-#  package_source 'https://packages.chef.io/files/stable/automate/0.7.239/el/7/automate-0.7.239-1.el7.x86_64.rpm'
-#  product_name "automate"
-  validation_pem File::read("/tmp/cookbooks/delivery.pem")
-  builder_pem File::read("/tmp/cookbooks/delivery.pem")
+  backup 5
+  group 'root'
+  mode '0644'
+  owner 'root'
+  path '/tmp/automate-0.7.239-1.el7.x86_64.rpm'
+  source 'https://packages.chef.io/files/stable/automate/0.7.239/el/7/automate-0.7.239-1.el7.x86_64.rpm'
 end
 
-chef_file  "automate.license" do
-  filename "automate.license"
-  group    "root"
-  source   "/tmp/cookbooks/automate_lab/files/default/automate.license"
-  user     "root"
+cookbook_file '/root/automate.license' do
+  action :create
+  group  'student'
+  owner  'student'
+  source 'automate.license'
 end
 
-chef_ingredient "reconfigure" do
-  action :reconfigure
-  product_name "automate"
+package 'automate' do
+  action :install
+  source '/tmp/automate-0.7.239-1.el7.x86_64.rpm'
+end
+
+execute 'setup automate' do
+  command "automate-ctl setup --license /root/automate.license --key /tmp/cookbooks/delivery.pem --server-url https://demo.chefserver.e9.io/organizations/automate --fqdn #{node['fqdn']} --enterprise AutomateClass --configure --no-build-node"
+  creates '/etc/delivery/delivery.rb'
+  action :run
+end
+
+append_if_no_line "configure data collection" do
+  path "/etc/delivery/delivery.rb"
+  line "data_collector['token'] = 'mytokenfordatacollection'"
+  notifies :run, 'execute[reconfigure automate]', :immediately
+end
+
+execute 'reconfigure automate' do
+  command 'automate-ctl reconfigure'
+  action :nothing
+end
+
+execute 'set admin password' do
+  command 'automate-ctl reset-password AutomateClass admin Cod3Can!'
+  action :run
+end
+
+#install runners, terraform should wait to build automate until these exist
+
+execute 'install runner 0' do
+  command 'automate-ctl install-runner demo.runner0.e9.io student --password 934texas -y'
+  action :run
+end
+
+execute 'install runner 1' do
+  command 'automate-ctl install-runner demo.runner1.e9.io student --password 934texas -y'
+  action :run
 end

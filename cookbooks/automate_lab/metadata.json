@@ -8,9 +8,11 @@
   "platforms": {
   },
   "dependencies": {
+    "chef-client": ">= 0.0.0",
+    "chef-ingredient": ">= 0.0.0",
+    "line": ">= 0.0.0",
     "openssh": ">= 0.0.0",
-    "yum": ">= 0.0.0",
-    "chef-ingredient": ">= 0.0.0"
+    "yum": ">= 0.0.0"
   },
   "recommendations": {
   },

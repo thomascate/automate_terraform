@@ -8,7 +8,7 @@ variable "cardTable" {
 #Set this to how many students we're making instances for
 variable "studentCount" {
   description = "How many students we need to make nodes for"
-  default = 1
+  default = 3
 }
 
 variable "ami" {
@@ -23,7 +23,7 @@ variable "chefServerInstanceType" {
 
 variable "automateInstanceType" {
   description = "Automate server ec2 instance type"
-  default = "t2.medium"
+  default = "t2.xlarge"
 }
 
 variable "runnerInstanceType" {
@@ -38,7 +38,7 @@ variable "prodInstanceType" {
 
 variable "key_name" {
   description = "Name of the SSH keypair to use in AWS."
-  default = "job"
+  default = "tcate"
 }
 
 variable "key_path" {

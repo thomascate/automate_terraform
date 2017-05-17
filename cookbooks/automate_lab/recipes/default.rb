@@ -18,10 +18,10 @@ package packages do
   action :install
 end
 
-#execute 'update packages' do
-#  command 'yum update -y'
-#  action :run
-#end
+execute 'update packages' do
+  command 'yum update -y'
+  action :run
+end
 
 user 'student' do
   action :create
