@@ -23,3 +23,6 @@ Policyfile.lock.json
 # Keys
 cookbooks/delivery.pem
 cookbooks/delivery.pem.pub
+
+# Automate License
+automate.license

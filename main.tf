@@ -148,14 +148,49 @@ provider "aws" {
 #  }
 #}
 
-#create the Demo Chef Server
-resource "aws_instance" "demo_chefserver" {
+##create the Demo Chef Server
+#resource "aws_instance" "demo_chefserver" {
+#  ami           = "${var.ami}"
+#  instance_type = "${var.chefServerInstanceType}"
+#  key_name = "${var.key_name}"
+#  vpc_security_group_ids = "${var.securityGroups}"
+#  provisioner "local-exec" {
+#    command = "./update_dns.rb \"demo.chefserver\" \"${self.public_ip}\""
+#  }
+#  provisioner "file" {
+#    source      = "./cookbooks"
+#    destination = "/tmp/cookbooks"
+#  }
+#  provisioner "remote-exec" {
+#    inline    = [
+#      "sudo hostnamectl set-hostname demo.chefserver.e9.io",
+#      "sudo /usr/bin/yum -y install wget",
+#      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
+#      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
+#      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_server]"
+#    ]
+#  }
+#  connection {
+#    type     = "ssh"
+#    user     = "centos"
+#    private_key = "${file("${var.key_path}")}"
+#  }
+#  tags {
+#    Name = "demo.chefserver.e9.io",
+#    X-Contact = "tcate@chef.io",
+#    X-Dept = "Customer Success",
+#    deletable = "very yes"
+#  }
+#}
+
+#create the Demo Automate Server
+resource "aws_instance" "demo_automateserver" {
   ami           = "${var.ami}"
-  instance_type = "${var.chefServerInstanceType}"
+  instance_type = "${var.automateInstanceType}"
   key_name = "${var.key_name}"
   vpc_security_group_ids = "${var.securityGroups}"
   provisioner "local-exec" {
-    command = "./update_dns.rb \"demo.chefserver\" \"${self.public_ip}\""
+    command = "./update_dns.rb \"demo.automate\" \"${self.public_ip}\""
   }
   provisioner "file" {
     source      = "./cookbooks"
@@ -163,11 +198,11 @@ resource "aws_instance" "demo_chefserver" {
   }
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname demo.chefserver.e9.io",
+      "sudo hostnamectl set-hostname demo.automate.e9.io",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_server]"
+      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_automate]"
     ]
   }
   connection {
@@ -176,7 +211,7 @@ resource "aws_instance" "demo_chefserver" {
     private_key = "${file("${var.key_path}")}"
   }
   tags {
-    Name = "demo.chefserver.e9.io",
+    Name = "demo.automate.e9.io",
     X-Contact = "tcate@chef.io",
     X-Dept = "Customer Success",
     deletable = "very yes"

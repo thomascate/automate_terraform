@@ -23,7 +23,7 @@ variable "chefServerInstanceType" {
 
 variable "automateInstanceType" {
   description = "Automate server ec2 instance type"
-  default = "t2.micro"
+  default = "t2.medium"
 }
 
 variable "runnerInstanceType" {
