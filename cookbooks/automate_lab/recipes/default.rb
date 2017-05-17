@@ -8,9 +8,12 @@ include_recipe 'openssh'
 include_recipe 'yum'
 
 packages = [
+  'atop',
   'emacs-nox',
   'nano',
+  'pstree',
   'traceroute',
+  'tree',
   'vim-enhanced'
 ]
 
