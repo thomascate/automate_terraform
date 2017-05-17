@@ -9,12 +9,15 @@ include_recipe 'yum'
 
 packages = [
   'atop',
+  'curl',
   'emacs-nox',
   'nano',
+  'openssl',
   'pstree',
   'traceroute',
   'tree',
-  'vim-enhanced'
+  'vim-enhanced',
+  'wget'
 ]
 
 package packages do
