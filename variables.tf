@@ -8,7 +8,7 @@ variable "cardTable" {
 #Set this to how many students we're making instances for
 variable "studentCount" {
   description = "How many students we need to make nodes for"
-  default = 3
+  default = 1
 }
 
 variable "ami" {

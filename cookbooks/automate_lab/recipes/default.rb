@@ -4,8 +4,12 @@
 #
 # Copyright:: 2017, The Authors, All Rights Reserved.
 
+node.default['openssh']['server']['authorized_keys_file'] = '%h/.ssh/authorized_keys'
+node.default['openssh']['server']['pubkey_authentication'] = 'yes'
+
 include_recipe 'openssh'
 include_recipe 'yum'
+include_recipe 'automate_lab::users'
 
 packages = [
   'atop',
@@ -13,7 +17,8 @@ packages = [
   'emacs-nox',
   'nano',
   'openssl',
-  'pstree',
+  'psmisc',
+  'telnet',
   'traceroute',
   'tree',
   'vim-enhanced',
@@ -27,21 +32,6 @@ end
 execute 'update packages' do
   command 'yum update -y'
   action :run
-end
-
-user 'student' do
-  action :create
-  comment 'User for automate class'
-  gid 'users'
-  home '/home/student'
-  shell '/bin/bash'
-  password '$6$yYyTy84n$w2mQDnZBQEpUGJJhdqBCNKP4JHbTGJvN4i1Ze2IoG3Fnbshnx3Hwhv/TN0Civ0PDdFhkSff6xBvOsBa5yfk4/.'
-  manage_home true
-end
-
-group 'student' do
-  action :create
-  members ['student']
 end
 
 #crond shouldn't be relying on the old hostname, but we'll bounce it to be sure

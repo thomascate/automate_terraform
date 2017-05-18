@@ -45,11 +45,28 @@ end
 #install runners, terraform should wait to build automate until these exist
 
 execute 'install runner 0' do
-  command 'automate-ctl install-runner demo.runner0.e9.io student --password 934texas -y'
+  command 'automate-ctl install-runner demo.runner0.e9.io student --password Cod3Can! -y'
   action :run
 end
 
 execute 'install runner 1' do
-  command 'automate-ctl install-runner demo.runner1.e9.io student --password 934texas -y'
+  command 'automate-ctl install-runner demo.runner1.e9.io student --password Cod3Can! -y'
+  action :run
+end
+
+#setup users for trainers
+
+execute 'create adufuor training user' do
+  command 'automate-ctl create-user AutomateClass adufuor --password Cod3Can! --roles admin --ssh-pub-key-file=/home/adufour/.ssh/authorized_keys'
+  action :run
+end
+
+execute 'create job training user' do
+  command 'automate-ctl create-user AutomateClass job --password Cod3Can! --roles admin --ssh-pub-key-file=/home/job/.ssh/authorized_keys'
+  action :run
+end
+
+execute 'create tcate training user' do
+  command 'automate-ctl create-user AutomateClass tcate --password Cod3Can! --roles admin --ssh-pub-key-file=/home/tcate/.ssh/authorized_keys'
   action :run
 end
