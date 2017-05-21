@@ -34,8 +34,7 @@ resource "aws_instance" "chefserver" {
   tags {
     Name = "${element(var.cardTable, count.index)}.chefserver.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -70,8 +69,7 @@ resource "aws_instance" "automate" {
   tags {
     Name = "${element(var.cardTable, count.index)}.automate.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -106,8 +104,7 @@ resource "aws_instance" "runner" {
   tags {
     Name = "${element(var.cardTable, count.index)}.runner.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -142,8 +139,7 @@ resource "aws_instance" "infranode" {
   tags {
     Name = "${element(var.cardTable, count.index)}.infranode.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -177,8 +173,7 @@ resource "aws_instance" "demo_chefserver" {
   tags {
     Name = "demo.chefserver.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -212,8 +207,7 @@ resource "aws_instance" "demo_automateserver" {
   tags {
     Name = "demo.automate.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
   depends_on = [
     "aws_instance.demo_runner",
@@ -252,8 +246,7 @@ resource "aws_instance" "demo_runner" {
   tags {
     Name = "demo.runner${count.index}.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
 }
 
@@ -288,8 +281,7 @@ resource "aws_instance" "demo_infra" {
   tags {
     Name = "demo.infra${count.index}.e9.io",
     X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success",
-    deletable = "very yes"
+    X-Dept = "Customer Success"
   }
   depends_on = [
     "aws_instance.demo_chefserver"

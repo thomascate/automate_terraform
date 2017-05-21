@@ -4,7 +4,7 @@ user 'adufour' do
   comment 'Andrew Dufour'
   home '/home/adufour'
   shell '/bin/bash'
-  supports :manage_home => true
+  manage_home true
 end
 
 directory '/home/adufour/.ssh' do
