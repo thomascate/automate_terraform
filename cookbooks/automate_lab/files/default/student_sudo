@@ -1,4 +1,2 @@
-adufuor   ALL = (ALL) NOPASSWD: ALL
-job       ALL = (ALL) NOPASSWD: ALL
-student   ALL = (ALL) NOPASSWD: ALL
-tcate     ALL = (ALL) NOPASSWD: ALL
+instructor     ALL = (ALL) NOPASSWD: ALL
+student        ALL = (ALL) NOPASSWD: ALL

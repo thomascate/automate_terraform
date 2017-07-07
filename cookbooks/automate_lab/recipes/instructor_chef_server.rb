@@ -1,16 +1,16 @@
 chef_ingredient "chef-server" do
   config <<-EOS
 api_fqdn "#{node["fqdn"]}"
-data_collector['root_url'] = "https://demo.automate.e9.io/data-collector/v0/"
+data_collector['root_url'] = "https://instructor.automate.success.chef.co/data-collector/v0/"
 data_collector['token'] = "mytokenfordatacollection"
   EOS
-  action :install
+  action         :install
   package_source 'https://packages.chef.io/files/stable/chef-server/12.15.6/el/7/chef-server-core-12.15.6-1.el7.x86_64.rpm'
-  product_name "chef-server"
+  product_name   "chef-server"
 end
 
 chef_ingredient "reconfigure" do
-  action :reconfigure
+  action       :reconfigure
   product_name "chef-server"
 end
 
@@ -20,8 +20,8 @@ chef_ingredient "install push jobs server" do
   product_name   "push-jobs-server"
 end
 
-chef_user    "delivery" do
-  email       "jobrien@chef.io"
+chef_user "delivery" do
+  email       "delivery@example.com"
   first_name  "delivery"
   key_path    "/root/delivery.pem"
   last_name   "user"
@@ -30,11 +30,11 @@ chef_user    "delivery" do
 end
 
 chef_org "automate org" do
-  admins ["delivery"]
-  key_path "/root/automate-validator.pem"
-  org "automate"
+  admins        ["delivery"]
+  key_path      "/root/automate-validator.pem"
+  org           "automate"
   org_full_name "automate org for chef training"
-  users ["delivery"]
+  users         ["delivery"]
 end
 
 execute "add delivery user key" do

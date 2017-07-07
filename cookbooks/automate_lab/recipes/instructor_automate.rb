@@ -21,7 +21,7 @@ package 'automate' do
 end
 
 execute 'setup automate' do
-  command "automate-ctl setup --license /root/automate.license --key /tmp/cookbooks/delivery.pem --server-url https://demo.chefserver.e9.io/organizations/automate --fqdn #{node['fqdn']} --enterprise AutomateClass --configure --no-build-node"
+  command "automate-ctl setup --license /root/automate.license --key /tmp/cookbooks/delivery.pem --server-url https://instructor.chefserver.success.chef.co/organizations/automate --fqdn #{node['fqdn']} --enterprise AutomateClass --configure --no-build-node"
   creates '/etc/delivery/delivery.rb'
   action :run
 end
@@ -45,28 +45,18 @@ end
 #install runners, terraform should wait to build automate until these exist
 
 execute 'install runner 0' do
-  command 'automate-ctl install-runner demo.runner0.e9.io student --password Cod3Can! -y'
+  command 'automate-ctl install-runner instructor.runner0.success.chef.co student --password Cod3Can! -y'
   action :run
 end
 
 execute 'install runner 1' do
-  command 'automate-ctl install-runner demo.runner1.e9.io student --password Cod3Can! -y'
+  command 'automate-ctl install-runner instructor.runner1.success.chef.co student --password Cod3Can! -y'
   action :run
 end
 
 #setup users for trainers
 
-execute 'create adufuor training user' do
-  command 'automate-ctl create-user AutomateClass adufuor --password Cod3Can! --roles admin --ssh-pub-key-file=/home/adufour/.ssh/authorized_keys'
-  action :run
-end
-
-execute 'create job training user' do
-  command 'automate-ctl create-user AutomateClass job --password Cod3Can! --roles admin --ssh-pub-key-file=/home/job/.ssh/authorized_keys'
-  action :run
-end
-
-execute 'create tcate training user' do
-  command 'automate-ctl create-user AutomateClass tcate --password Cod3Can! --roles admin --ssh-pub-key-file=/home/tcate/.ssh/authorized_keys'
+execute 'create instructor training user' do
+  command 'automate-ctl create-user AutomateClass instructor --password Cod3Can! --roles admin --ssh-pub-key-file=/home/instructor/.ssh/authorized_keys'
   action :run
 end
