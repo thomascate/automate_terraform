@@ -11,8 +11,6 @@ resource "aws_vpc" "auar_vpc" {
 
   tags {
   Name      = "automate-up-and-running-training-vpc"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -23,8 +21,6 @@ resource "aws_internet_gateway" "auar_internet_gateway" {
 
   tags {
   Name      = "automate-up-and-running-training-gateway"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -45,8 +41,6 @@ resource "aws_subnet" "auar_public_subnet" {
 
   tags {
   Name      = "automate-up-and-running-training-subnet"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -59,8 +53,6 @@ resource "aws_security_group" "auar_allow_all" {
 
   tags {
   Name      = "automate-up-and-running-training-security-group"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -121,8 +113,6 @@ resource "aws_instance" "student_chef_server" {
 
   tags {
   Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-chef-server"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -165,8 +155,6 @@ resource "aws_instance" "student_automate_server" {
 
   tags {
   Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-automate-server"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
 
@@ -209,7 +197,5 @@ resource "aws_instance" "student_runner" {
 
   tags {
   Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-runner"
-  X-Dept    = "Success"
-  X-Contact = "jobrien"
   }
 }
