@@ -26,9 +26,14 @@ Now that you have what you need in place:
 1. Run `terraform plan`.
 1. Run `terraform apply`.
 
+Final preparation for training:
+
+1. Create a table mapping IP addresses to cardnames. Each card should have an Automate Server, a Chef Server, and a Runner assigned by each machine's respective IP.
+1. Pass out cards during training to students to assign machines.
+
 # Variables in terraform.tfvars
 
-- student_count - The number of students for whom to deploy infastructure. It is generally advised to over-provision by a few clusters in case problems with instances arise. e.g., If you have 15 students, set `student_count` to `18`.
+- student_count - The number of students for whom to deploy infastructure. It is generally advised to over-provision by a few clusters in case problems with instances arise. e.g., If you have 15 students, set `student_count` to `18`. Be sure also to include the instructor in the count.
 
 - aws_ami - The EC2 AMI to use for your instances. Presently, this course is only tested with Irving Popovetsky's 2017/02/16 release of his [High Performance CentOS 7 AMI](https://github.com/irvingpop/packer-chef-highperf-centos7-ami). The following are matching AMI/Region pairs suggested for use in this training:
 
@@ -54,14 +59,19 @@ Now that you have what you need in place:
   
   us-west-2
 
-- instructor_automate_instance_type - The instance type for the instructor's Chef Automate instance. Defaults to `"t2.xlarge"`.
-
-- instructor_chef_server_instance_type - The instance type for the instructor's Chef Automate instance. Defaults to `"t2.medium"`.
-
-- instructor_runner_instance_type - The instance type for the instructor's Chef Automate instance. Defaults to `"t2.micro"`.
-
 - student_automate_instance_type - The instance type for the student's Chef Automate instance. Defaults to `"t2.xlarge"`.
 
 - student_chef_server_instance_type - The instance type for the student's Chef Automate instance. Defaults to `"t2.medium"`.
 
 - student_runner_instance_type - The instance type for the student's Chef Automate instance. Defaults to `"t2.micro"`.
+
+# Administering the Training
+
+You will need to record the IP Addresses associated with each of the student machines in a table that correlates to the card to which they are assigned. Example:
+
+| Card        | Automate Server IP | Chef Server IP |   Runner IP  |
+|-------------|--------------------|----------------|--------------|
+| 2 of Hearts |    52.87.215.142   | 54.236.12.94   | 34.203.29.59 |
+| 3 of Hearts |    52.637.15.97    | 54.77.325.153  | 52.817.25.14 |
+
+Each student, as well as the instructor, will be assigned a card from a standard 52 card deck. That card assignment will determine which machines are theirs for the duration of the training. When the training begins, students should be given their card assignment and asked to ssh to the machines using the user and password supplied in the training materials.

@@ -49,18 +49,3 @@ variable "aws_key_path" {
   description = "Path to the SSH key to auth to AWS"
   default = "~/.ssh/id_rsa"
 }
-
-variable "instructor_chef_server_instance_type" {
-  description = "EC2 instance type for instructor Chef Server"
-  default = "t2.medium"
-}
-
-variable "instructor_automate_instance_type" {
-  description = "EC2 instance type for instructor Chef Server"
-  default = "t2.xlarge"
-}
-
-variable "instructor_runner_instance_type" {
-  description = "EC2 instance type for instructor Chef Server"
-  default = "t2.micro"
-}

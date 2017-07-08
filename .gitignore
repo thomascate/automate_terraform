@@ -7,3 +7,4 @@ terraform.tfvars
 *.pub.bak
 *.license
 *.license.bak
+old/
