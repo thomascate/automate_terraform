@@ -2,3 +2,9 @@
 .dns_creds
 terraform.tfstate
 terraform.tfstate.backup
+terraform.tfvars
+*.pub
+*.pub.bak
+*.license
+*.license.bak
+old/

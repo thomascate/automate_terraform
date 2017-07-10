@@ -1,51 +1,6 @@
-
-user 'adufour' do
-  action :create
-  comment 'Andrew Dufour'
-  home '/home/adufour'
-  shell '/bin/bash'
-  manage_home true
-end
-
-directory '/home/adufour/.ssh' do
-  owner 'adufour'
-  group 'adufour'
-  mode '0700'
-  action :create
-end
-
-cookbook_file '/home/adufour/.ssh/authorized_keys' do
-  source 'adufour.pub'
-  owner 'adufour'
-  group 'adufour'
-  mode '0600'
-end
-
-user 'job' do
-  action :create
-  comment 'Josh Obrien'
-  home '/home/job'
-  shell '/bin/bash'
-  manage_home true
-end
-
-directory '/home/job/.ssh' do
-  owner 'job'
-  group 'job'
-  mode '0700'
-  action :create
-end
-
-cookbook_file '/home/job/.ssh/authorized_keys' do
-  source 'job.pub'
-  owner 'job'
-  group 'job'
-  mode '0600'
-end
-
 user 'student' do
   action :create
-  comment 'User for automate class'
+  comment 'Student user for Chef Automate Up and Running Training'
   gid 'users'
   home '/home/student'
   shell '/bin/bash'
@@ -58,24 +13,24 @@ group 'student' do
   members ['student']
 end
 
-user 'tcate' do
+user 'instructor' do
   action :create
-  comment 'Thomas Cate'
-  home '/home/tcate'
+  comment 'Instructor user for Chef Automate Up and Running Training'
+  home '/home/instructor'
   shell '/bin/bash'
   manage_home true
 end
 
-directory '/home/tcate/.ssh' do
-  owner 'tcate'
-  group 'tcate'
+directory '/home/instructor/.ssh' do
+  owner 'instructor'
+  group 'instructor'
   mode '0700'
   action :create
 end
 
-cookbook_file '/home/tcate/.ssh/authorized_keys' do
-  source 'tcate.pub'
-  owner 'tcate'
-  group 'tcate'
+cookbook_file '/home/instructor/.ssh/authorized_keys' do
+  source 'instructor.pub'
+  owner 'instructor'
+  group 'instructor'
   mode '0644'
 end

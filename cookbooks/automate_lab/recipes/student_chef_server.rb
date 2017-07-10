@@ -15,5 +15,5 @@ end
 remote_file "/tmp/opscode-push-jobs-server-2.2.1-1.el7.x86_64.rpm" do
   group  'student'
   owner  'student'
-  source 'https://packages.chef.io/files/stable/opscode-push-jobs-server/2.2.1/el/7/opscode-push-jobs-server-2.2.1-1.el7.x86_64.rpm' 
+  source 'https://packages.chef.io/files/stable/opscode-push-jobs-server/2.2.1/el/7/opscode-push-jobs-server-2.2.1-1.el7.x86_64.rpm'
 end

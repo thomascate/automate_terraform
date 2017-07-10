@@ -1,289 +1,201 @@
 provider "aws" {
-  shared_credentials_file = ".aws_creds"
-  region     = "us-west-2"
+  region = "${var.aws_region}"
 }
 
-#create the Chef Servers
-resource "aws_instance" "chefserver" {
-  count = "${var.studentCount}"
-  ami           = "${var.ami}"
-  instance_type = "${var.chefServerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.chefserver\" \"${self.public_ip}\""
+# Create VPC
+
+resource "aws_vpc" "auar_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags {
+  Name      = "automate-up-and-running-training-vpc"
   }
+}
+
+# Create Internet Gateway
+
+resource "aws_internet_gateway" "auar_internet_gateway" {
+  vpc_id = "${aws_vpc.auar_vpc.id}"
+
+  tags {
+  Name      = "automate-up-and-running-training-gateway"
+  }
+}
+
+# Create Route to the Internet
+
+resource "aws_route" "auar_internet_access" {
+  route_table_id         = "${aws_vpc.auar_vpc.main_route_table_id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_internet_gateway.auar_internet_gateway.id}"
+}
+
+# Create VPC Subnet
+
+resource "aws_subnet" "auar_public_subnet" {
+  vpc_id                  = "${aws_vpc.auar_vpc.id}"
+  cidr_block              = "10.0.0.0/24"
+  map_public_ip_on_launch = true
+
+  tags {
+  Name      = "automate-up-and-running-training-subnet"
+  }
+}
+
+# Create All-Open Security Group
+
+resource "aws_security_group" "auar_allow_all" {
+  name        = "auar_allow_all"
+  description = "Chef Automate Up and Running Security Group - Insecure"
+  vpc_id      = "${aws_vpc.auar_vpc.id}"
+
+  tags {
+  Name      = "automate-up-and-running-training-security-group"
+  }
+}
+
+resource "aws_security_group_rule" "ingress_allow_all" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.auar_allow_all.id}"
+}
+
+resource "aws_security_group_rule" "egress_allow_all" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.auar_allow_all.id}"
+}
+
+# Create Student Chef Servers
+
+resource "aws_instance" "student_chef_server" {
+  connection {
+    type        = "ssh"
+    user        = "${var.aws_ami_user}"
+    private_key = "${file("${var.aws_key_path}")}"
+  }
+
+  ami                         = "${var.aws_ami}"
+  count                       = "${var.student_count}"
+  instance_type               = "${var.student_chef_server_instance_type}"
+  key_name                    = "${var.aws_key_name}"
+  subnet_id                   = "${aws_subnet.auar_public_subnet.id}"
+  vpc_security_group_ids      = ["${aws_security_group.auar_allow_all.id}"]
+
   provisioner "file" {
     source      = "./cookbooks"
     destination = "/tmp/cookbooks"
   }
+
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.chefserver.e9.io",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.chefserver.success.chef.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::chef_server]"
+      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::student_chef_server]"
     ]
   }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
+
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = 30
+    delete_on_termination = true
   }
+
   tags {
-    Name = "${element(var.cardTable, count.index)}.chefserver.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
+  Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-chef-server"
   }
 }
 
-#create the Chef Automate Servers
-resource "aws_instance" "automate" {
-  count = "${var.studentCount}"
-  ami           = "${var.ami}"
-  instance_type = "${var.automateInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.automate\" \"${self.public_ip}\""
+# Create Student Automate Servers
+
+resource "aws_instance" "student_automate_server" {
+  connection {
+    type        = "ssh"
+    user        = "${var.aws_ami_user}"
+    private_key = "${file("${var.aws_key_path}")}"
   }
+
+  ami                         = "${var.aws_ami}"
+  count                       = "${var.student_count}"
+  instance_type               = "${var.student_automate_instance_type}"
+  key_name                    = "${var.aws_key_name}"
+  subnet_id                   = "${aws_subnet.auar_public_subnet.id}"
+  vpc_security_group_ids      = ["${aws_security_group.auar_allow_all.id}"]
+
   provisioner "file" {
     source      = "./cookbooks"
     destination = "/tmp/cookbooks"
   }
+
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.automate.e9.io",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.automate.success.chef.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::automate]"
+      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::student_automate]"
     ]
   }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
+
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = 30
+    delete_on_termination = true
   }
+
   tags {
-    Name = "${element(var.cardTable, count.index)}.automate.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
+  Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-automate-server"
   }
 }
 
-##create the Chef Runners
-resource "aws_instance" "runner" {
-  count = "${var.studentCount}"
-  ami           = "${var.ami}"
-  instance_type = "${var.runnerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.runner\" \"${self.public_ip}\""
+# Create Student Chef Runners
+
+resource "aws_instance" "student_runner" {
+  connection {
+    type        = "ssh"
+    user        = "${var.aws_ami_user}"
+    private_key = "${file("${var.aws_key_path}")}"
   }
+
+  ami                         = "${var.aws_ami}"
+  count                       = "${var.student_count}"
+  instance_type               = "${var.student_runner_instance_type}"
+  key_name                    = "${var.aws_key_name}"
+  subnet_id                   = "${aws_subnet.auar_public_subnet.id}"
+  vpc_security_group_ids      = ["${aws_security_group.auar_allow_all.id}"]
+
   provisioner "file" {
     source      = "./cookbooks"
     destination = "/tmp/cookbooks"
   }
-  provisioner "remote-exec" {
-    inline    = [
-      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.runner.e9.io",
-      "sudo /usr/bin/yum -y install wget",
-      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab]"
-    ]
-  }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
-  tags {
-    Name = "${element(var.cardTable, count.index)}.runner.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
-  }
-}
 
-##create the Chef Infra Nodes
-resource "aws_instance" "infranode" {
-  count = "${var.studentCount}"
-  ami           = "${var.ami}"
-  instance_type = "${var.runnerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"${element(var.cardTable, count.index)}.infranode\" \"${self.public_ip}\""
-  }
-  provisioner "file" {
-    source      = "./cookbooks"
-    destination = "/tmp/cookbooks"
-  }
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.cardTable, count.index)}.infranode.e9.io",
-      "sudo /usr/bin/yum -y install wget",
-      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab]"
-    ]
-  }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
-  tags {
-    Name = "${element(var.cardTable, count.index)}.infranode.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
-  }
-}
-
-#create the Demo Chef Server
-resource "aws_instance" "demo_chefserver" {
-  ami           = "${var.ami}"
-  instance_type = "${var.chefServerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"demo.chefserver\" \"${self.public_ip}\""
-  }
-  provisioner "file" {
-    source      = "./cookbooks"
-    destination = "/tmp/cookbooks"
-  }
-  provisioner "remote-exec" {
-    inline    = [
-      "sudo hostnamectl set-hostname demo.chefserver.e9.io",
-      "sudo /usr/bin/yum -y install wget",
-      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_server]"
-    ]
-  }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
-  tags {
-    Name = "demo.chefserver.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
-  }
-}
-
-#create the Demo Automate Server
-resource "aws_instance" "demo_automateserver" {
-  ami           = "${var.ami}"
-  instance_type = "${var.automateInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"demo.automate\" \"${self.public_ip}\""
-  }
-  provisioner "file" {
-    source      = "./cookbooks"
-    destination = "/tmp/cookbooks"
-  }
-  provisioner "remote-exec" {
-    inline    = [
-      "sudo hostnamectl set-hostname demo.automate.e9.io",
-      "sudo /usr/bin/yum -y install wget",
-      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_automate]"
-    ]
-  }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
-  tags {
-    Name = "demo.automate.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
-  }
-  depends_on = [
-    "aws_instance.demo_runner",
-    "aws_instance.demo_chefserver"
-  ]
-}
-
-#create the Demo Runner Servers
-resource "aws_instance" "demo_runner" {
-  ami           = "${var.ami}"
-  count         = 2
-  instance_type = "${var.runnerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"demo.runner${count.index}\" \"${self.public_ip}\""
-  }
-  provisioner "file" {
-    source      = "./cookbooks"
-    destination = "/tmp/cookbooks"
-  }
-  provisioner "remote-exec" {
-    inline    = [
-      "sudo hostnamectl set-hostname demo.runner${count.index}.e9.io",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.runner.success.chef.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab]"
     ]
   }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
-  tags {
-    Name = "demo.runner${count.index}.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
-  }
-}
 
-#create the Demo Infra Servers
-resource "aws_instance" "demo_infra" {
-  ami           = "${var.ami}"
-  count         = 2
-  instance_type = "${var.runnerInstanceType}"
-  key_name = "${var.key_name}"
-  vpc_security_group_ids = "${var.securityGroups}"
-  provisioner "local-exec" {
-    command = "./update_dns.rb \"demo.infra${count.index}\" \"${self.public_ip}\""
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = 30
+    delete_on_termination = true
   }
-  provisioner "file" {
-    source      = "./cookbooks"
-    destination = "/tmp/cookbooks"
-  }
-  provisioner "remote-exec" {
-    inline    = [
-      "sudo hostnamectl set-hostname demo.infra${count.index}.e9.io",
-      "sudo /usr/bin/yum -y install wget",
-      "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
-      "sudo /bin/chef-solo -c /tmp/cookbooks/solo.rb -o recipe[automate_lab],recipe[automate_lab::demo_infra]"
-    ]
-  }
-  connection {
-    type     = "ssh"
-    user     = "centos"
-    private_key = "${file("${var.key_path}")}"
-  }
+
   tags {
-    Name = "demo.infra${count.index}.e9.io",
-    X-Contact = "tcate@chef.io",
-    X-Dept = "Customer Success"
+  Name      = "automate-up-and-running-training-${element(var.card_table, count.index)}-runner"
   }
-  depends_on = [
-    "aws_instance.demo_chefserver"
-  ]
 }
