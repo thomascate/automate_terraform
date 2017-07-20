@@ -46,9 +46,9 @@ Final preparation for training:
 
 - aws_ami_user - The user for authentication into the EC2  AMI you have selected. This defaults to "centos" and assumes you are using one of the above AMIs.
 
-- aws_key_name - The name of your AWS keyfile in AWS.
+- aws_key_name - The name of your AWS keyfile in AWS. **Do not** include ".pem" or any other file endings in this variable. It is looking for the name of the key as it shows up in the AWS Console.
 
-- aws_key_path - The path to your AWS keyfile, including the filename, on your workstation.
+- aws_key_path - The path to your AWS keyfile, including the filename, on your workstation. Be sure to include the keyfile itself within the path. So something like `~/.aws/my_key.pem`, etc.
 
 - aws_instance_type - The size and type of machines you will spin up for all Chef Automate instances. Examples in `example.tfvars` should be used in most cases.
 
