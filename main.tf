@@ -97,7 +97,7 @@ resource "aws_instance" "student_chef_server" {
 
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.chefserver.success.chef.co",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.chefserver.success.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
@@ -139,7 +139,7 @@ resource "aws_instance" "student_automate_server" {
 
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.automate.success.chef.co",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.automate.success.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
@@ -181,7 +181,7 @@ resource "aws_instance" "student_runner" {
 
   provisioner "remote-exec" {
     inline    = [
-      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.runner.success.chef.co",
+      "sudo hostnamectl set-hostname ${element(var.card_table, count.index)}.runner.success.co",
       "sudo /usr/bin/yum -y install wget",
       "sudo /bin/wget https://packages.chef.io/files/stable/chefdk/1.3.43/el/7/chefdk-1.3.43-1.el7.x86_64.rpm -O /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
       "sudo /bin/rpm -Uv /tmp/chefdk-1.3.43-1.el7.x86_64.rpm",
