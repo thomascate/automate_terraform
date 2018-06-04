@@ -4,13 +4,28 @@ user 'student' do
   gid 'users'
   home '/home/student'
   shell '/bin/bash'
-  password '$6$Sw5.l8BU$/oHW/Ctd8i0erOlq07F9vzvnwSHQXLN8/a9U7QVFGcbRemoSTEFc9SeCG1Z6cANnuk9nh3v2K5JGG/8oKE7S81'
+  password '$6$GSLU5IWA$21JNoNcKsj53w.F1oE7BRqIVXnJ/LT.ILwlr4pXRs169b8O.HPijZTPA4pKKoz4oDAfBfuITz5R2A9GfzjOQ21'
+  manage_home true
+end
+
+user 'chef' do
+  action :create
+  comment 'chef user for Chef Automate Up and Running Training'
+  gid 'users'
+  home '/home/chef'
+  shell '/bin/bash'
+  password '$6$GSLU5IWA$21JNoNcKsj53w.F1oE7BRqIVXnJ/LT.ILwlr4pXRs169b8O.HPijZTPA4pKKoz4oDAfBfuITz5R2A9GfzjOQ21'
   manage_home true
 end
 
 group 'student' do
   action :create
-  members ['student']
+  members ['student', 'chef']
+end
+
+group 'chef' do
+  action :create
+  members ['chef']
 end
 
 user 'instructor' do
@@ -34,3 +49,4 @@ cookbook_file '/home/instructor/.ssh/authorized_keys' do
   group 'instructor'
   mode '0644'
 end
+

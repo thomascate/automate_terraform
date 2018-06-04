@@ -1,2 +1,3 @@
+chef           ALL = (ALL) NOPASSWD: ALL
 instructor     ALL = (ALL) NOPASSWD: ALL
 student        ALL = (ALL) NOPASSWD: ALL

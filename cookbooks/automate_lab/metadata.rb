@@ -4,12 +4,13 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures automate_lab'
 long_description 'Installs/Configures automate_lab'
-version '0.1.0'
+version '0.1.1'
 
 depends 'chef-client'
 depends 'chef-ingredient'
 depends 'line'
 depends 'openssh'
+depends 'selinux'
 depends 'yum'
 
 # The `issues_url` points to the location where issues for this cookbook are

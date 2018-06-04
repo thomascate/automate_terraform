@@ -14,7 +14,10 @@ include_recipe 'automate_lab::users'
 packages = [
   'atop',
   'curl',
+  'docker-ce',
   'emacs-nox',
+  'git',
+  'jq',
   'nano',
   'openssl',
   'psmisc',
@@ -37,6 +40,10 @@ end
 #crond shouldn't be relying on the old hostname, but we'll bounce it to be sure
 service 'crond' do
   action :nothing
+end
+
+service "iptables" do
+  action [ :disable, :stop ]
 end
 
 cookbook_file '/etc/sudoers.d/99-student' do
