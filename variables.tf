@@ -50,3 +50,7 @@ variable "chefdk_url" {
   description = "URL of ChefDK to install"
   default = "https://packages.chef.io/files/stable/chefdk/2.5.3/el/7/chefdk-2.5.3-1.el7.x86_64.rpm"
 }
+
+variable "aws_profile" {
+  description = "AWS Account to use"
+}
